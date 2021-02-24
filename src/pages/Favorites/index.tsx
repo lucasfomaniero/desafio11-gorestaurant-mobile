@@ -1,3 +1,4 @@
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
 
@@ -32,7 +33,17 @@ const Favorites: React.FC = () => {
 
   useEffect(() => {
     async function loadFavorites(): Promise<void> {
-      // Load favorite foods from api
+      try {
+        const response = await api.get<Food[]>('/favorites');
+        setFavorites(
+          response.data.map(favoriteFood => ({
+            ...favoriteFood,
+            formattedPrice: formatValue(favoriteFood.price),
+          })),
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     loadFavorites();
